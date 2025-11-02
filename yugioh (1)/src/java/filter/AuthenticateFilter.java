@@ -36,6 +36,8 @@ public class AuthenticateFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain)
             throws IOException, ServletException {
+        
+        request.setCharacterEncoding("UTF-8");
 
         // Ép kiểu
         HttpServletRequest httpRequest = (HttpServletRequest) request;
@@ -63,8 +65,8 @@ public class AuthenticateFilter implements Filter {
         } else {
             // Kiểm tra xem họ có đang CỐ ĐĂNG NHẬP không
             // (Giả sử action đăng nhập của bạn là "login")
-            // ** HÃY THAY "login" BẰNG TÊN ACTION ĐÚNG CỦA BẠN **
-            if ("login".equals(action)) {
+          
+            if ("login".equals(action) || "signup".equals(action)) {
 
                 // Nếu đúng là đang "login", hãy cho request đi tiếp
                 // để Servlet xử lý việc đăng nhập

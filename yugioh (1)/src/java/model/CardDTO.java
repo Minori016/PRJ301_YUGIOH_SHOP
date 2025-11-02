@@ -14,10 +14,12 @@ public class CardDTO {
     private String rarity;
     private double price;
     private String image;
+    private int setID; // <-- THÊM DÒNG NÀY
 
     public CardDTO() {
     }
 
+   
     public CardDTO(String cardID, String cardName, String rarity, double price, String image) {
         this.cardID = cardID;
         this.cardName = cardName;
@@ -25,6 +27,16 @@ public class CardDTO {
         this.price = price;
         this.image = image;
     }
+
+    // ========= THÊM GETTER/SETTER CHO SETID =========
+    public int getSetID() {
+        return setID;
+    }
+
+    public void setSetID(int setID) {
+        this.setID = setID;
+    }
+    // ===============================================
 
     public String getCardID() {
         return cardID;
@@ -68,6 +80,7 @@ public class CardDTO {
 
     @Override
     public String toString() {
+        // Bạn có thể thêm setID vào đây nếu muốn
         return "CardDTO{" + "cardID=" + cardID + ", cardName=" + cardName + ", rarity=" + rarity + ", price=" + price + ", image=" + image + '}';
     }
     

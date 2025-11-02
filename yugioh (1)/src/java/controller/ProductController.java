@@ -67,6 +67,50 @@ public class ProductController extends HttpServlet {
             e.printStackTrace();
         }
     }
+    
+
+    private void processViewDetail(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        String destinationPage = "viewCard.jsp"; // <--- 1. Đã đổi sang file JSP mới
+        
+        try {
+            String cardID = request.getParameter("cardID");
+            CardDAO cardDAO = new CardDAO();
+            SetDAO setDAO = new SetDAO();
+
+            // 2. Lấy sản phẩm chính (đã bao gồm SetID từ Bước 2)
+            CardDTO cardDetail = cardDAO.getCardByID(cardID);
+            
+            // 3. Lấy Set của lá bài (CHO DÒNG CHỮ ĐỎ)
+            SetDTO cardSet = null;
+            if (cardDetail != null) {
+                // Dùng hàm getSetByID (từ Bước 3)
+                cardSet = setDAO.getSetByID(cardDetail.getSetID());
+            } else {
+                // Xử lý nếu không tìm thấy card
+                System.out.println("Card not found with ID: " + cardID);
+            }
+            
+            // 4. Lấy danh sách Categories cho sidebar
+            List<SetDTO> listSet = setDAO.getAllSet();
+            
+            // 5. Lấy sản phẩm cho "Staff's Pick" trong sidebar
+            CardDTO staffPick = cardDAO.getMostExpensiveCard();
+
+            // 6. Đặt các thuộc tính để gửi qua viewCard.jsp
+            request.setAttribute("p", cardDetail);         // (Card chính)
+            request.setAttribute("cardSet", cardSet);      // (Set của card đó)
+            request.setAttribute("listCater", listSet);   // (Tất cả Set cho sidebar)
+            request.setAttribute("last", staffPick);      // (Staff pick cho sidebar)
+            
+            request.getRequestDispatcher(destinationPage).forward(request, response);
+
+        } catch (Exception e) {
+            response.getWriter().println("An error occurred in ProductController: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -80,6 +124,9 @@ public class ProductController extends HttpServlet {
         if (txtAction.equals("categoryProduct")) {
             processGetAllCardBySet(request, response);
         }
+        else if (txtAction.equals("viewDetail")) {
+        processViewDetail(request, response);
+    }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

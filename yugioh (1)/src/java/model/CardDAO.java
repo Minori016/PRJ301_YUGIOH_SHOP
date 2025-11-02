@@ -44,6 +44,7 @@ public class CardDAO {
                 card.setRarity(rs.getString("Rarity"));
                 card.setPrice(rs.getDouble("Price"));
                 card.setImage(rs.getString("ImageUrl"));
+                card.setSetID(rs.getInt("SetID"));
 
                 list.add(card);
             }
@@ -75,6 +76,7 @@ public class CardDAO {
                 card.setRarity(rs.getString("rarity"));
                 card.setPrice(rs.getDouble("price"));
                 card.setImage(rs.getString("ImageUrl"));
+                card.setSetID(rs.getInt("SetID"));
 
             }
             conn.close();
@@ -97,6 +99,7 @@ public class CardDAO {
                     c.setRarity(rs.getString("Rarity"));
                     c.setPrice(rs.getDouble("Price"));
                     c.setImage(rs.getString("ImageUrl"));
+                    c.setSetID(rs.getInt("SetID"));
                     list.add(c);
                 }
             }
@@ -104,6 +107,31 @@ public class CardDAO {
             e.printStackTrace();
         }
         return list;
+    }
+    
+    public CardDTO getCardByID(String cardID) {
+        CardDTO card = null;
+        try {
+            Connection conn = DBUtils.getConnection();
+            String sql = "SELECT * FROM tblCards WHERE CardCode = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, cardID);
+            
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                card = new CardDTO();
+                card.setCardID(rs.getString("cardCode"));
+                card.setCardName(rs.getString("cardName"));
+                card.setRarity(rs.getString("rarity"));
+                card.setPrice(rs.getDouble("price"));
+                card.setImage(rs.getString("ImageUrl"));
+                card.setSetID(rs.getInt("SetID"));
+            }
+            conn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return card;
     }
 
 }

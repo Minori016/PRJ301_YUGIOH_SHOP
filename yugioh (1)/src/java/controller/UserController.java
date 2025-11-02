@@ -17,11 +17,9 @@ import javax.servlet.http.HttpSession;
 import model.CardDTO;
 import model.UserDTO;
 import model.UserDAO;
+import utils.EmailUtils;
 
-/**
- *
- * @author bi
- */
+
 @WebServlet(name = "UserController", urlPatterns = {"/UserController"})
 public class UserController extends HttpServlet {
 
@@ -182,6 +180,85 @@ public class UserController extends HttpServlet {
 
         request.getRequestDispatcher("home.jsp").forward(request, response);
     }
+    private void processRegister(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String url = "login.jsp"; // Trang mặc định nếu có lỗi
+        try {
+            String username = request.getParameter("user");
+            String fullName = request.getParameter("fullName");
+            String email = request.getParameter("email");
+            String password = request.getParameter("pass");
+            String rePassword = request.getParameter("repass");
+            
+            UserDAO userDAO = new UserDAO();
+            String msg = "";
+            boolean hasError = false;
+
+            // 1. Kiểm tra mật khẩu có khớp không
+            if (!password.equals(rePassword)) {
+                msg = "Passwords do not match!";
+                hasError = true;
+            } 
+            // 2. Kiểm tra Username đã tồn tại chưa
+            else if (userDAO.getUserById(username) != null) {
+                msg = "Username '" + username + "' already exists!";
+                hasError = true;
+            }
+            // 3. Kiểm tra Email đã tồn tại chưa
+            else if (userDAO.getUserByEmail(email) != null) {
+                msg = "Email '" + email + "' already registered!";
+                hasError = true;
+            }
+
+            if (hasError) {
+                request.setAttribute("msg", msg);
+                // Giữ lại dữ liệu người dùng đã nhập để họ không phải gõ lại
+                request.setAttribute("username", username);
+                request.setAttribute("fullName", fullName);
+                request.setAttribute("email", email);
+            } else {
+                // Tạo DTO và insert vào DB
+                // Gán role "USER" và status "true" (hoạt động)
+                // Bạn có thể đổi "USER" thành "US" nếu CSDL của bạn quy định vậy
+                UserDTO newUser = new UserDTO(username, email, password, fullName, "", true, "USER", java.time.LocalDateTime.now());
+                
+                // Phương thức insert trong UserDAO sẽ tự động hash mật khẩu
+                boolean checkInsert = userDAO.insert(newUser); 
+                
+                if (checkInsert) {
+                    
+                    try {
+                   
+                    String toEmail = email; 
+                    
+                    // Gọi hàm sendRegistrationEmail đã cung cấp
+                   
+                    EmailUtils.sendRegistrationEmail(toEmail, fullName, username);
+                    
+                } catch (Exception e) {
+                    log("Error sending registration email: " + e.getMessage());
+                    // Không cần chặn người dùng nếu gửi mail lỗi, chỉ cần log lại
+                    e.printStackTrace();
+                }
+                    
+                    
+                    // Dùng sendRedirect để xóa dữ liệu form sau khi đăng ký thành công
+                    // và hiển thị msg trên trang login
+                    response.sendRedirect("login.jsp?msg=Registration successful! Please sign in.");
+                    return; // Dừng thực thi sau khi redirect
+                } else {
+                    request.setAttribute("msg", "An error occurred during registration. Please try again.");
+                }
+            }
+        } catch (Exception e) {
+            log("Error at processRegister: " + e.toString());
+            request.setAttribute("msg", "An unexpected error occurred.");
+            e.printStackTrace(); // In lỗi ra console server
+        }
+        
+        // Chỉ forward nếu có lỗi
+        request.getRequestDispatcher(url).forward(request, response);
+    }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -205,6 +282,9 @@ public class UserController extends HttpServlet {
             processCallUpdateUser(request, response);
         } else if (txtAction.equals("ourCollection")) {
             processOurCollection(request, response);
+        }
+        else if (txtAction.equals("signup")) {
+            processRegister(request, response);
         }
     }
 

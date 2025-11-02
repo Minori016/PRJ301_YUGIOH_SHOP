@@ -14,12 +14,13 @@ public class MainController extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    
         response.setContentType("text/html;charset=UTF-8");
         String txtAction = request.getParameter("txtAction");
         String url = "login.jsp";
 
         String[] userActions = {"login", "logout", "searchUser", "addUser", "callUpdateUser", "ourCollection" , "signup"};
-        String[] productActions = {"categoryProduct", "deleteProduct"};
+        String[] productActions = {"categoryProduct", "deleteProduct","viewDetail"};
 
         if (Arrays.asList(userActions).contains(txtAction)) {
             url = "UserController";

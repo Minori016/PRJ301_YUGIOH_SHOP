@@ -45,7 +45,7 @@
                             <img class="card-img-top" src="${o.image}" alt="Card image cap">
                             <div class="card-body">
                                 <h4 class="card-title show_txt">
-                                    <a href="#" title="View Product">${o.cardName}</a>
+                                    <a href="MainController?txtAction=viewDetail&cardID=${o.cardID}" title="View Product">${o.cardName}</a>
                                 </h4>
                                 <p class="card-text show_txt">${o.rarity}</p>
                                 <div class="row">

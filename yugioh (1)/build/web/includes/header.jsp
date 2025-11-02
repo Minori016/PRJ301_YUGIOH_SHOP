@@ -1,5 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -54,6 +54,6 @@
                     background-size: cover; background-position: center; padding: 120px 0;">
         <div class="container">
             <h1 class="jumbotron-heading fw-bold">Trading Card Game Shop</h1>
-            <p class="lead mb-0">Reputation builds the brand — with over 10 years of providing TCG products such as Yu-Gi-Oh! trading cards.</p>
+            <p class="lead mb-0">Reputation builds the brand ? with over 10 years of providing TCG products such as Yu-Gi-Oh! trading cards.</p>
         </div>
     </section>

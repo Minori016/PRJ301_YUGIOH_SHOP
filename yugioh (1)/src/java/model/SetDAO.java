@@ -51,6 +51,30 @@ public class SetDAO {
         }
         return list;
 }
+    
+    public SetDTO getSetByID(int setID) {
+        SetDTO set = null;
+        String sql = "SELECT * FROM tblCardSet WHERE SetID = ?";
+        
+        try (Connection conn = DBUtils.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setInt(1, setID);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    set = new SetDTO();
+                    set.setSetID(rs.getInt("SetID"));
+                    set.setSetName(rs.getString("SetName"));
+                    set.setRealeseDate(rs.getString("ReleaseDate"));
+                    set.setTotalCard(rs.getInt("TotalCards"));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return set;
+    }
        public static void main(String[] args) {
         SetDAO dao = new SetDAO();
         List<SetDTO> list = dao.getAllSet();
